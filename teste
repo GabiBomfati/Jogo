@@ -1,0 +1,77 @@
+# Bibliotecas
+from modules import clrScreen, displayHeader, getUserOption, validateUserOption, displayLine, displayMsg, displayMsgCenter, displayHeaderT
+from random import randint
+from time import sleep
+
+# Constantes, Variáveis e Listas
+msgsInicio = ['Seja bem-vindo ao', 'Jogo do PAR OU ÍMPAR', 'desenvolvido por: Gabriela Bomfati Garcia', 'BOA SORTE!']
+playAgain = '' # Define que para jogar novamente deve ser digitado algum dos caracteres definidos em playAgain
+
+# Funções
+def startParOuImpar(): # Função para começar o jogo
+    while True:
+        clrScreen() # Limpa a tela
+        displayHeader(msgsInicio) # Mostra a mensagem de início
+        playParOuImpar() # Função para começar o jogo
+        playAgain = getUserOption('Deseja jogar novamente? [s/n]') # Pergunta se deseja jogar novamente
+        while not validateUserOption(playAgain, ['s', 'n', 'S', 'N']): # Valida a resposta
+            playAgain = getUserOption('Deseja jogar novamente? [s/n]') # Pergunta se deseja jogar novamente
+        if playAgain.lower() != 's': # Verifica a resposta
+            break # Interrompe o laço while
+
+def displayScore(typeScore, playerScore, computerScore):
+    msgs = [f'Player: {playerScore} --- PC: {computerScore}']
+    displayHeaderT(msgs)
+
+def determineWinner(playerNumber, playerChoice, computerNumber):
+    total = playerNumber + computerNumber
+    result = 'Empate!'
+    if (total % 2 == 0 and playerChoice == 'par') or (total % 2 != 0 and playerChoice == 'impar'):
+        result = 'Você Ganhou'
+    else:
+        result = 'Você Perdeu'
+    return result
+
+def playParOuImpar():
+    playerScore = 0
+    computerScore = 0
+    while playerScore < 2 and computerScore < 2:
+        # O jogador escolhe um número e o tipo
+        playerNumber = int(getUserOption('Escolha um número (0 a 10): '))
+        while not (0 <= playerNumber <= 10):
+            playerNumber = int(getUserOption('Número inválido! Escolha um número (0 a 10): '))
+        playerChoice = getUserOption('Escolha "par" ou "ímpar": ').lower()
+        while playerChoice not in ['par', 'impar']:
+            playerChoice = getUserOption('Escolha inválida! Escolha "par" ou "ímpar": ').lower()
+
+        # O computador escolhe um número aleatório
+        computerNumber = randint(0, 10)
+
+        # Determina o vencedor
+        result = determineWinner(playerNumber, playerChoice, computerNumber)
+        displayHeaderT([
+            f'Número do Player: {playerNumber}',
+            f'Número do PC: {computerNumber}',
+            f'Soma: {playerNumber + computerNumber}',
+            result
+        ])
+
+        if "Ganhou" in result:
+            playerScore += 1
+        elif "Perdeu" in result:
+            computerScore += 1
+
+        if playerScore < 2 and computerScore < 2:
+            displayScore("PLACAR", playerScore, computerScore)
+
+        sleep(1)
+
+    displayScore("PLACAR FINAL", playerScore, computerScore)
+    if playerScore > computerScore:
+        displayHeader(['Parabéns', 'VOCÊ GANHOU!'])
+    else:
+        displayHeader(['Parabéns', 'VOCÊ PERDEU!'])
+
+# Main
+if __name__ == "__main__":
+    startParOuImpar()
